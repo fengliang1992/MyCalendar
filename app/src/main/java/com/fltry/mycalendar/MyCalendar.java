@@ -41,6 +41,7 @@ public class MyCalendar extends View {
     private float mRectSideLength = 5;
 
     private float titleHeight;
+    private float btnWidth;
 
     /**
      * 字体和背景颜色
@@ -87,6 +88,15 @@ public class MyCalendar extends View {
         textPaint.setAntiAlias(true);
         textPaint.setTextAlign(Paint.Align.CENTER);
         bgPaint.setAntiAlias(true);
+
+        textPaint.setTextSize(20);
+        String str = "哈哈哈";
+        int len = str.length();
+        float[] widths = new float[len];
+        textPaint.getTextWidths(str, widths);
+        for (int j = 0; j < len; j++) {
+            btnWidth += (int) Math.ceil(widths[j]);
+        }
 
         if (calendar == null) {
             calendar = Calendar.getInstance();
@@ -241,13 +251,22 @@ public class MyCalendar extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawColor(Color.WHITE);
-        textPaint.setTextSize(40);
-        textPaint.setColor(Color.BLACK);
-        canvas.drawText(selectYear + "-" + selectMonth, mRectWidth * 7 / 2, titleHeight / 2 - getBaseLine(textPaint), textPaint);
+        drawTitle(canvas);
         drawWeek(canvas);
+
         for (int i = 0; i < allDaysList.size(); i++) {
             drawOneRow(canvas, i + 1, allDaysList.get(i));
         }
+    }
+
+    private void drawTitle(Canvas canvas) {
+        textPaint.setTextSize(40);
+        textPaint.setColor(Color.BLACK);
+        canvas.drawText(selectYear + "-" + selectMonth, mRectWidth * 7 / 2, titleHeight / 2 - getBaseLine(textPaint), textPaint);
+
+        textPaint.setTextSize(20);
+        canvas.drawText("上一月", mRectWidth / 2, titleHeight / 2 - getBaseLine(textPaint), textPaint);
+        canvas.drawText("下一月", mRectWidth * 13 / 2, titleHeight / 2 - getBaseLine(textPaint), textPaint);
     }
 
     private void drawWeek(Canvas canvas) {
@@ -403,10 +422,24 @@ public class MyCalendar extends View {
                 setDayColor(date, Color.WHITE, Color.RED);
             } else {
                 setSelectDate(Integer.parseInt(day.getYear()), Integer.parseInt(day.getMonth()));
-                onSelectClickListener.onMonthChange(day.getYear(), day.getMonth());
+                onSelectClickListener.onMonthChange();
                 beforeDay = null;
             }
             onSelectClickListener.onSelect(day.getYear(), day.getMonth(), day.getDay());
+        } else if (eventX >= 0 && eventX < 2 * btnWidth && eventY >= 0 && eventY < titleHeight) {
+            if (selectMonth == 1)
+                setSelectDate(selectYear - 1, 12);
+            else
+                setSelectDate(selectYear, selectMonth - 1);
+
+            onSelectClickListener.onMonthChange();
+        } else if (eventX >= mRectWidth * 7 - 2 * btnWidth && eventX < mRectWidth * 7 && eventY >= 0 && eventY < titleHeight) {
+            if (selectMonth == 12)
+                setSelectDate(selectYear + 1, 1);
+            else
+                setSelectDate(selectYear, selectMonth + 1);
+
+            onSelectClickListener.onMonthChange();
         }
     }
 
@@ -419,6 +452,6 @@ public class MyCalendar extends View {
     public interface OnSelectClickListener {
         void onSelect(String year, String month, String day);
 
-        void onMonthChange(String year, String month);
+        void onMonthChange();
     }
 }

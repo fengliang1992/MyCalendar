@@ -2,6 +2,7 @@ package com.fltry.mycalendar;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,11 +34,11 @@ public class MainActivity extends AppCompatActivity {
         myCalendar.setOnSelectClickListener(new MyCalendar.OnSelectClickListener() {
             @Override
             public void onSelect(String year, String month, String day) {
-
+                Toast.makeText(MainActivity.this, "选择了：" + year + "年" + month + "月" + day + "日", Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onMonthChange(String year, String month) {
+            public void onMonthChange() {
                 myCalendar.setDayColor(colors);
             }
         });
