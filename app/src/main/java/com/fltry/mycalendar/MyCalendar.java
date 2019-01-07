@@ -245,6 +245,8 @@ public class MyCalendar extends View {
         mRectWidth = (float) mWidth / 7;
         mRectHeight = mRectWidth / 2;
         titleHeight = mRectWidth * 2 / 3;
+        int mHeight = (int) (mRectHeight * 7 + titleHeight);
+        setMeasuredDimension(mWidth, mHeight);
     }
 
     @Override
